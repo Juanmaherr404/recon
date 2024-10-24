@@ -1,0 +1,20 @@
+
+; <<>> DiG 9.20.0-Debian <<>> mercadona.com
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 57730
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;mercadona.com.			IN	A
+
+;; ANSWER SECTION:
+mercadona.com.		53	IN	A	195.53.40.253
+
+;; Query time: 16 msec
+;; SERVER: 8.8.8.8#53(8.8.8.8) (UDP)
+;; WHEN: Wed Oct 23 18:29:58 CEST 2024
+;; MSG SIZE  rcvd: 58
+
