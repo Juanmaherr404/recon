@@ -1,2 +1,0 @@
-# aldi.com
-## Infraestructura
