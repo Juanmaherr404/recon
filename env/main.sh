@@ -16,6 +16,27 @@ ruta_resultados=./resultados/$dominio/$timestamp
 mkdir -p "$ruta_resultados/raw" 
 mkdir -p "$ruta_resultados/clean" 
 
+# Ejecutar CTFR para encontrar subdominios y guardar los resultados en raw/subdominios.txt
+echo "Ejecutando CTFR para encontrar subdominios..."
+ctfr -d "$dominio" > "$ruta_resultados/raw/subdominios.txt" 2>&1
+wait  # Esperar a que CTFR termine
+
+# Limpiar subdominios en raw/subdominios.txt, dejando solo los válidos y ordenados en clean/subdominios.txt
+grep -oP "([a-zA-Z0-9-]+\.)+$dominio" "$ruta_resultados/raw/subdominios.txt" |   # Extraer subdominios válidos
+    grep -E "^[a-zA-Z0-9.-]+$" |           # Filtrar líneas con caracteres válidos
+    grep -v "^$dominio$" |                 # Opcional: eliminar el dominio raíz (si no deseas incluirlo)
+    sort -u > "$ruta_resultados/clean/subdominios.txt"
+
+# Verificar si el archivo de subdominios contiene datos y agregar al archivo Markdown si es el caso
+if [ -s "$ruta_resultados/clean/subdominios.txt" ]; then
+    echo "Subdominios limpios guardados en $ruta_resultados/clean/subdominios.txt"
+    echo "### Subdominios" >> "$archivo_md"
+    cat "$ruta_resultados/clean/subdominios.txt" | awk '{print "- " $0}' >> "$archivo_md"
+else
+    echo "No se encontraron subdominios o CTFR falló."
+fi
+
+
 #Analisis de infraestructura
 
 dig +short A $dominio > $ruta_resultados/clean/IP
@@ -26,7 +47,7 @@ dig +short SRV $dominio > $ruta_resultados/clean/SRV
 dig +short AAAA $dominio > $ruta_resultados/clean/AAAA
 dig +short CNAME $dominio > $ruta_resultados/clean/CNAME
 dig +short SOA $dominio > $ruta_resultados/clean/SOA
-dig +short txt _dmarc.$domain > $ruta_resultados/clena/TXT
+dig +short txt _dmarc.$domain > $ruta_resultados/clean/TXT
 
 # Realizar consultas WHOIS y DIG
 whois "$dominio" > "$ruta_resultados/raw/whois"
@@ -156,3 +177,6 @@ fi
 # Visualizar el archivo con markmap
 markmap "$archivo_md"
 
+
+ctfr -d $dominio 
+katana -u $dominio
