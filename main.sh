@@ -155,4 +155,3 @@ fi
 
 # Visualizar el archivo con markmap
 markmap "$archivo_md"
-
